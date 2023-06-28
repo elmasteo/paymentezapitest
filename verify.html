@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">  
+<head>    
+    <title>Verify</title>    
+    <link href="https://paymentez.github.io/api-doc/images/favicon-d165b374.svg" rel="icon" type="image/svg">
+    <meta charset="UTF-8">
+    <meta name="title" content="Título de la WEB">
+    <meta name="description" content="Descripción de la WEB">     
+
+</head>  
+<body> 
+<img class="image" src="https://cdn.paymentez.com/img/nv/nuvei_logo.png">  
+<link rel="stylesheet" type="text/css" href="style.css"> 
+    <header>
+           
+    </header>
+  </head>
+  <body>
+<div class="wrapper">
+    <div class="navbar">
+    <ul>
+        <li><a href="index.html">Introduction</a></li>
+        <li><a href="cash.html">Cash</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Bank Transfer</a>
+          <ul class="dropdown-menu">
+            <li><a href="getBanks.html">Get Banks</a></li>
+            <li><a href="createTransfer.html">Create Transfer</a></li>
+            <li><a href="getStatus.html">Get Status</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">QR EMVCO</a>
+          <ul class="dropdown-menu">
+            <li><a href="generateQR.html">Generate QR</a></li>
+            <li><a href="consultQR.html">Consult QR</a></li>
+            <li><a href="updateQR.html">Update QR</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Wallets</a>
+          <ul class="dropdown-menu">
+            <li><a href="generateOrderWallet.html">Generate Order</a></li>
+            <li><a href="verifyOrderWallet.html">Consult Order</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Cards</a>
+          <ul class="dropdown-menu">
+            <li><a href="addCard.html">Add a Card</a></li>
+            <li><a href="getAllCards.html">Get all Cards</a></li>
+            <li><a href="deleteCard.html">Delete a Card</a></li>
+            <li><a href="initReference.html">Init a Reference</a></li>
+            <li><a href="debitWithToken.html">Debit With Token</a></li>
+            <li><a href="debitWithCredit.html">Debit With Credit</a></li>
+            <li><a href="authorize.html">Authorize</a></li>
+            <li><a href="capture.html">Capture</a></li>
+            <li><a href="verify.html">Verify</a></li>
+            <li><a href="refund.html">Refund</a></li>
+            <li><a href="void.html">Void</a></li>
+            <li><a href="getTransactionInfo.html">Transaction Info</a></li>
+          </ul>
+        </li>
+        <li><a href="linktopay.html">Link To Pay</a></li>
+
+    </ul>
+</div>
+</div>
+    <form> 
+      <label for="environment">Environment:</label>
+       <select id="environment" >
+          <option value="#">Select</option>
+          <option value="https://ccapi.paymentez.com/v2/transaction/verify">PROD</option>
+          <option value="https://ccapi-stg.paymentez.com/v2/transaction/verify">STG</option>
+        </select>
+
+      <input type="text" id="appcode" name="appcode" placeholder="AppCode" required>
+      <input type="password" id="appkey" name="appkey" placeholder="AppKey" required>
+
+      <input type="text" id="identifier" name="identifier" placeholder="ID" required>
+
+      <input type="text" id="transactionId" name="transactionId" placeholder="Transaction ID" required> 
+
+      <input type="text" id="value" name="value" placeholder="Value" required> 
+
+      <select id="type">
+          <option value="#">User Type</option>
+          <option value="BY_AMOUNT">By Amount</option>
+          <option value="BY_AUTH_CODE">By Auth Code</option>
+          <option value="BY_OTP">By OTP</option>
+          <option value="BY_CRES">By cRES</option>
+          <option value="AUTHENTICATION_CONTINUE">Auth Continue</option>
+        </select>  
+
+      <input type="button" value="Enviar" onclick="obtenerDatos()">
+    </form>
+
+    <div id="result"></div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+
+<script type="text/javascript">
+
+  function obtenerDatos(){
+
+    var environment = document.getElementById('environment').value;
+    var appcode = document.getElementById('appcode').value;
+    var appkey = document.getElementById('appkey').value;  
+    var identifier = document.getElementById('identifier').value;
+    var transactionId = document.getElementById('transactionId').value;
+    var value = document.getElementById('value').value;
+    var type = document.getElementById('type').value;
+
+    if (!identifier ||  !transactionId || !value ||!appcode ||!appkey) {
+      alert("Por favor ingrese todos los campos");
+      return;
+    }
+  
+    function generateToken() {
+      const app_code = appcode;
+      const app_key = appkey;
+      const timestamp = Math.floor((new Date().getTime()) / 1000)+28;
+      const key_time = app_key + timestamp;
+      const uniq_token = CryptoJS.SHA256(key_time);
+      const str_union = `${app_code};${timestamp};${uniq_token}`;
+      const token = btoa(str_union);
+      return token;
+    }
+  
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("auth-token", generateToken());
+  
+    var raw = JSON.stringify({
+        "user": {
+            "id": identifier
+        },
+        "transaction": {
+            "id": transactionId
+        },
+        "type": type,
+        "value": value
+
+    });
+  
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+  
+    fetch(environment, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
+      })
+      .catch(error => console.log('error', error));
+}
+</script>
+<script src="index.js" type="text/javascript"></script>
+</body>  
+</html>
+

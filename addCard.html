@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">  
+<head>    
+    <title>Add Card</title>    
+    <link href="https://paymentez.github.io/api-doc/images/favicon-d165b374.svg" rel="icon" type="image/svg">
+    <meta charset="UTF-8">
+    <meta name="title" content="Título de la WEB">
+    <meta name="description" content="Descripción de la WEB">     
+
+</head>  
+<body> 
+<img class="image" src="https://cdn.paymentez.com/img/nv/nuvei_logo.png">  
+<link rel="stylesheet" type="text/css" href="style.css"> 
+    <header>
+           
+    </header>
+  </head>
+  <body>
+   <div class="wrapper"> 
+    <div class="navbar">
+    <ul>
+        <li><a href="index.html">Introduction</a></li>
+        <li><a href="cash.html">Cash</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Bank Transfer</a>
+          <ul class="dropdown-menu">
+            <li><a href="getBanks.html">Get Banks</a></li>
+            <li><a href="createTransfer.html">Create Transfer</a></li>
+            <li><a href="getStatus.html">Get Status</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">QR EMVCO</a>
+          <ul class="dropdown-menu">
+            <li><a href="generateQR.html">Generate QR</a></li>
+            <li><a href="consultQR.html">Consult QR</a></li>
+            <li><a href="updateQR.html">Update QR</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Wallets</a>
+          <ul class="dropdown-menu">
+            <li><a href="generateOrderWallet.html">Generate Order</a></li>
+            <li><a href="verifyOrderWallet.html">Consult Order</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Cards</a>
+          <ul class="dropdown-menu">
+            <li><a href="addCard.html">Add a Card</a></li>
+            <li><a href="getAllCards.html">Get all Cards</a></li>
+            <li><a href="deleteCard.html">Delete a Card</a></li>
+            <li><a href="initReference.html">Init a Reference</a></li>
+            <li><a href="debitWithToken.html">Debit With Token</a></li>
+            <li><a href="debitWithCredit.html">Debit With Credit</a></li>
+            <li><a href="authorize.html">Authorize</a></li>
+            <li><a href="capture.html">Capture</a></li>
+            <li><a href="verify.html">Verify</a></li>
+            <li><a href="refund.html">Refund</a></li>
+            <li><a href="void.html">Void</a></li>
+            <li><a href="getTransactionInfo.html">Transaction Info</a></li>
+          </ul>
+        </li>
+        <li><a href="linktopay.html">Link To Pay</a></li>
+
+    </ul>
+</div>
+</div>
+    <form>
+        <label for="environment">Environment:</label>
+       <select id="environment" >
+          <option value="#">Select</option>
+          <option value="https://ccapi.paymentez.com/v2/card/add">PROD</option>
+          <option value="https://ccapi-stg.paymentez.com/v2/card/add">STG</option>
+        </select>
+
+      <input type="text" id="appcode" name="appcode" placeholder="AppCode" required>
+      <input type="password" id="appkey" name="appkey" placeholder="AppKey" required>
+        <input type="text" id="identifier" name="identifier" placeholder="ID" required>
+        <input type="text" id="email" name="email" placeholder="Email" required>
+
+      <div class="container2">
+    <div class="card">
+        <div class="form">
+            <div class="right-side">
+              <label>Card Details</label>
+                <div class="input-text">
+                  
+                    <input type="text" id="cardHolderName" placeholder="Card Holder Name" require>
+                    
+                </div>
+                <div class="input-text">
+                    <input type="text" id="cardNumber" placeholder="0000000000000000" data-slots="0" data-accept="\d" require>
+                    
+                </div> 
+                <div class="input-div">
+                    <div class="input-text">
+                        <select id="expirationMonth" >
+                          <option value="#">MM</option>
+                          <option value="1">01</option>
+                          <option value="2">02</option>
+                          <option value="3">03</option>
+                          <option value="4">04</option>
+                          <option value="5">05</option>
+                          <option value="6">06</option>
+                          <option value="7">07</option>
+                          <option value="8">08</option>
+                          <option value="9">09</option>
+                          <option value="10">10</option>
+                          <option value="11">11</option>
+                          <option value="12">12</option>
+                        </select>
+
+                       <input type="text" id="expirationYear" placeholder="YYYY" data-slots="YYYY" require>
+                       
+                    </div>
+                    <div class="input-text">
+                       <input type="text" id="CVV" placeholder="000" data-slots="0" data-accept="\d" size="3" require>
+                       
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+      <input type="button" value="Enviar" onclick="obtenerDatos()">
+    </form>
+
+    <div id="result"></div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+
+<script type="text/javascript">
+
+    document.addEventListener('DOMContentLoaded', () => {
+    for (const el of document.querySelectorAll("[placeholder][data-slots]")) {
+    const pattern = el.getAttribute("placeholder"),
+    slots = new Set(el.dataset.slots || "_"),
+    prev = (j => Array.from(pattern, (c,i) => slots.has(c)? j=i+1: j))(0),
+    first = [...pattern].findIndex(c => slots.has(c)),
+    accept = new RegExp(el.dataset.accept || "\\d", "g"),
+    clean = input => {
+    input = input.match(accept) || [];
+    return Array.from(pattern, c =>
+    input[0] === c || slots.has(c) ? input.shift() || c : c
+    );
+    },
+    format = () => {
+    const [i, j] = [el.selectionStart, el.selectionEnd].map(i => {
+    i = clean(el.value.slice(0, i)).findIndex(c => slots.has(c));
+    return i<0? prev[prev.length-1]: back? prev[i-1] || first: i; }); el.value=clean(el.value).join``; el.setSelectionRange(i, j); back=false; }; let back=false; el.addEventListener("keydown", (e)=> back = e.key === "Backspace");
+        el.addEventListener("input", format);
+        el.addEventListener("focus", format);
+        el.addEventListener("blur", () => el.value === pattern && (el.value=""));
+        }
+        });
+
+    var user_name = document.querySelector(".user_name");
+    var set_card_number = document.querySelector(".set_card_number");
+    var user_cardcvv = document.querySelector(".user_card_cvv");
+    var card= document.querySelector(".debit-card");
+    var click_pay = document.querySelector(".click-pay");
+    var left_side = document.querySelector(".left-side");
+    var right_side = document.querySelector(".right-side");
+    var success = document.querySelector(".success");
+
+
+    function validateform(){
+        validate=true;
+    var validate_inputs=document.querySelectorAll(".right-side input");  
+         
+         validate_inputs.forEach(function(input_valid){
+         input_valid.classList.remove('warning');
+         if(input_valid.hasAttribute('require')){
+             if(input_valid.value.length==0){
+                 validate=false;
+                 input_valid.classList.add('warning');
+             }
+         }
+    });
+      return validate;
+    }
+
+  function obtenerDatos(){
+
+    var environment = document.getElementById('environment').value;
+    var appcode = document.getElementById('appcode').value;
+    var appkey = document.getElementById('appkey').value;
+
+    var identifier = document.getElementById('identifier').value;
+    var email = document.getElementById('email').value;
+    var cardNumber = document.getElementById('cardNumber').value;
+    var cardHolderName = document.getElementById('cardHolderName').value;
+    var expirationMonth = document.getElementById('expirationMonth').value;
+    var expirationYear = document.getElementById('expirationYear').value;
+    var CVV = document.getElementById('CVV').value;
+    
+
+    if (!cardNumber ||  !cardHolderName || !expirationMonth ||!expirationYear ||! CVV ||!appcode ||!appkey) {
+      alert("Por favor ingrese todos los campos");
+      return;
+    }
+  
+    function generateToken() {
+      const app_code = appcode;
+      const app_key = appkey;
+      const timestamp = Math.floor((new Date().getTime()) / 1000)+28;
+      const key_time = app_key + timestamp;
+      const uniq_token = CryptoJS.SHA256(key_time);
+      const str_union = `${app_code};${timestamp};${uniq_token}`;
+      const token = btoa(str_union);
+      return token;
+    }
+  
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("auth-token", generateToken());
+  
+    var raw = JSON.stringify({
+    "user": {
+        "id": identifier,
+        "email": email
+    },
+    "card": {
+        "number": cardNumber,
+        "holder_name": cardHolderName,
+        "expiry_month": parseInt(expirationMonth),
+        "expiry_year": parseInt(expirationYear),
+        "cvc": CVV
+    }
+});
+  
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+  
+    fetch(environment, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
+      })
+      .catch(error => console.log('error', error));
+}
+</script>
+<script src="index.js" type="text/javascript"></script>
+</body>  
+</html>
+

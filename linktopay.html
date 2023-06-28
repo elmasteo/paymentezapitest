@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">  
+<head>    
+    <title>Link To Pay</title>    
+    <link href="https://paymentez.github.io/api-doc/images/favicon-d165b374.svg" rel="icon" type="image/svg">
+    <meta charset="UTF-8">
+    <meta name="title" content="Título de la WEB">
+    <meta name="description" content="Descripción de la WEB">     
+
+</head>  
+<body> 
+<img class="image" src="https://cdn.paymentez.com/img/nv/nuvei_logo.png">  
+<link rel="stylesheet" type="text/css" href="style.css"> 
+    <header>
+           
+    </header>
+  </head>
+  <body>
+<div class="wrapper">
+    <div class="navbar">
+    <ul>
+        <li><a href="index.html">Introduction</a></li>
+        <li><a href="cash.html">Cash</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Bank Transfer</a>
+          <ul class="dropdown-menu">
+            <li><a href="getBanks.html">Get Banks</a></li>
+            <li><a href="createTransfer.html">Create Transfer</a></li>
+            <li><a href="getStatus.html">Get Status</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">QR EMVCO</a>
+          <ul class="dropdown-menu">
+            <li><a href="generateQR.html">Generate QR</a></li>
+            <li><a href="consultQR.html">Consult QR</a></li>
+            <li><a href="updateQR.html">Update QR</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Wallets</a>
+          <ul class="dropdown-menu">
+            <li><a href="generateOrderWallet.html">Generate Order</a></li>
+            <li><a href="verifyOrderWallet.html">Consult Order</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Cards</a>
+          <ul class="dropdown-menu">
+            <li><a href="addCard.html">Add a Card</a></li>
+            <li><a href="getAllCards.html">Get all Cards</a></li>
+            <li><a href="deleteCard.html">Delete a Card</a></li>
+            <li><a href="initReference.html">Init a Reference</a></li>
+            <li><a href="debitWithToken.html">Debit With Token</a></li>
+            <li><a href="debitWithCredit.html">Debit With Credit</a></li>
+            <li><a href="authorize.html">Authorize</a></li>
+            <li><a href="capture.html">Capture</a></li>
+            <li><a href="verify.html">Verify</a></li>
+            <li><a href="refund.html">Refund</a></li>
+            <li><a href="void.html">Void</a></li>
+            <li><a href="getTransactionInfo.html">Transaction Info</a></li>
+          </ul>
+        </li>
+        <li><a href="linktopay.html">Link To Pay</a></li>
+
+    </ul>
+</div>
+</div>
+    <form>
+      <label for="environment">Environment:</label>
+       <select id="environment" >
+          <option value="#">Select</option>
+          <option value="https://noccapi.paymentez.com/linktopay/init_order/">PROD</option>
+          <option value="https://noccapi-stg.paymentez.com/linktopay/init_order/">STG</option>
+        </select>
+
+      <input type="text" id="appcode" name="appcode" placeholder="AppCode" required>
+      <input type="password" id="appkey" name="appkey" placeholder="AppKey" required>
+
+      <input type="text" id="name" name="nombre" placeholder="Name" required>
+
+      <input type="text" id="last_name" name="apellido" placeholder="Last Name" required>
+
+      <input type="email" id="email" name="correo" placeholder="Email" required>
+
+      <input type="number" id="amount" name="monto" min="0" step="0.01" placeholder="Amount" required>
+
+      <input type="text" id="fiscal" name="cedula" placeholder="Fiscal Number" required>
+
+      <input type="button" value="Enviar" onclick="obtenerDatos()">
+    </form>
+
+    <div id="result"></div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+
+<script type="text/javascript">
+  function obtenerDatos(){
+  
+    var environment = document.getElementById('environment').value;
+    var appcode = document.getElementById('appcode').value;
+    var appkey = document.getElementById('appkey').value;
+    var name = document.getElementById('name').value;
+    var last_name = document.getElementById('last_name').value;
+    var email = document.getElementById('email').value;
+    var amount = document.getElementById('amount').value;
+    var fiscal = document.getElementById('fiscal').value;
+
+    if (!name || !last_name || !email || !amount || !fiscal ||!appcode ||!appkey) {
+      alert("Por favor ingrese todos los campos");
+      return;
+    }
+  
+    function generateToken() {
+      const app_code = appcode;
+      const app_key = appkey;
+      const timestamp = Math.floor((new Date().getTime()) / 1000);
+      const key_time = app_key + timestamp;
+      const uniq_token = CryptoJS.SHA256(key_time);
+      const str_union = `${app_code};${timestamp};${uniq_token}`;
+      const token = btoa(str_union);
+      return token;
+    }
+  
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("auth-token", generateToken());
+  
+    var raw = JSON.stringify({
+      "user": {
+        "id": "117",
+        "email": email,
+        "name": name,
+        "last_name": last_name,
+        "fiscal_number": fiscal
+      },
+      "order": {
+        "dev_reference": "123",
+        "description": "PRUEBA",
+        "amount": amount,
+        "installments_type": 0,
+        "currency": "COP"
+      },
+      "configuration": {
+        "partial_payment": true,
+        "expiration_days": 1,
+        "allowed_payment_methods": [
+          "All"
+        ],
+        "success_url": "https://url-to-success.com",
+        "failure_url": "https://url-to-failure.com",
+        "pending_url": "https://url-to-pending.com",
+        "review_url": "https://url-to-review.com"
+      }
+    });
+  
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+  
+    fetch(environment, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
+      })
+      .catch(error => console.log('error', error));
+}
+</script>
+<script src="index.js" type="text/javascript"></script>
+</body>  
+</html>
+

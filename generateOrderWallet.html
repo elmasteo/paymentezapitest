@@ -122,7 +122,7 @@
     function generateToken() {
       const app_code = appcode;
       const app_key = appkey;
-      const timestamp = Math.floor((new Date().getTime()) / 1000)+28;
+      const timestamp = Math.floor((new Date().getTime()) / 1000);
       const key_time = app_key + timestamp;
       const uniq_token = CryptoJS.SHA256(key_time);
       const str_union = `${app_code};${timestamp};${uniq_token}`;

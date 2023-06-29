@@ -95,6 +95,10 @@
 
   function obtenerDatos(){
 
+    fetch('http://worldtimeapi.org/api/ip')
+      .then(response => response.json())
+      .then(data => {
+
     var environment = document.getElementById('environment').value;
     var appcode = document.getElementById('appcode').value;
     var appkey = document.getElementById('appkey').value;  
@@ -107,20 +111,17 @@
       return;
     }
   
-    function generateToken() {
-      const app_code = appcode;
-      const app_key = appkey;
-      const timestamp = Math.floor((new Date().getTime()) / 1000);
-      const key_time = app_key + timestamp;
-      const uniq_token = CryptoJS.SHA256(key_time);
-      const str_union = `${app_code};${timestamp};${uniq_token}`;
-      const token = btoa(str_union);
-      return token;
-    }
+  var timestamp = data.unixtime;
+        const app_code = appcode;
+        const app_key = appkey;
+        const key_time = app_key + timestamp;
+        const uniq_token = CryptoJS.SHA256(key_time);
+        const str_union = `${app_code};${timestamp};${uniq_token}`;
+        const token = btoa(str_union);
   
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("auth-token", generateToken());
+    myHeaders.append("auth-token", token);
   
     var raw = JSON.stringify({
    "locale":"es",
@@ -150,7 +151,13 @@
         document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
       })
       .catch(error => console.log('error', error));
-}
+
+      })
+      .catch(error => {
+        console.error('Error al obtener la hora: ', error);
+      });
+
+    }
 </script>
 <script src="index.js" type="text/javascript"></script>
 </body>  

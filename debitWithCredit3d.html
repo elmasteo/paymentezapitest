@@ -120,10 +120,9 @@
         <input type="text" id="termUrl" name="termUrl" placeholder="Term URL" required>
         <input type="button" value="Enviar" onclick="obtenerDatos()">
     </form>
+    <div id="result"></div>
+    <div id="result1"></div>
 </div>
-<div id="result1"></div>
-
-<div id="result2"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -289,8 +288,8 @@
                       .then(datos => {
                         const challengeRequest = datos["3ds"]["browser_response"]["challenge_request"];
                         const transactionID = datos["transaction"]["id"];
-                        document.getElementById('result1').innerHTML ='Tu id: '+ transactionID;
-                        document.getElementById('result2').innerHTML ='Challenge: ' + challengeRequest;
+                        document.getElementById('result').innerHTML ='Tu id: '+ transactionID;
+                        document.getElementById('result1').innerHTML ='Challenge: ' + challengeRequest;
                         //document.getElementById('result').innerHTML = JSON.stringify(datos, null, 2);
                       })
                       .catch(error => console.log('Error', error));

@@ -53,6 +53,7 @@
             <li><a href="initReference.html">Init a Reference</a></li>
             <li><a href="debitWithToken.html">Debit With Token</a></li>
             <li><a href="debitWithCredit.html">Debit With Credit</a></li>
+            <li><a href="debitWithCredit3d.html">Debit With Credit 3DS</a></li> 
             <li><a href="authorize.html">Authorize</a></li>
             <li><a href="capture.html">Capture</a></li>
             <li><a href="verify.html">Verify</a></li>
@@ -83,16 +84,16 @@
 
       <input type="text" id="transactionId" name="transactionId" placeholder="Transaction ID" required> 
 
-      <input type="text" id="value" name="value" placeholder="Value" required> 
-
       <select id="type">
-          <option value="#">User Type</option>
+          <option value="#">Type</option>
           <option value="BY_AMOUNT">By Amount</option>
           <option value="BY_AUTH_CODE">By Auth Code</option>
           <option value="BY_OTP">By OTP</option>
           <option value="BY_CRES">By cRES</option>
           <option value="AUTHENTICATION_CONTINUE">Auth Continue</option>
         </select>  
+
+        <input type="text" id="value" name="value" placeholder="Value" required> 
 
       <input type="button" value="Enviar" onclick="obtenerDatos()">
     </form>
@@ -143,7 +144,8 @@
             "id": transactionId
         },
         "type": type,
-        "value": value
+        "value": value,
+        "more_info": true
 
     });
   

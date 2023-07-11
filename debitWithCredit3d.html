@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Debit With Credit</title>
+    <link href="https://paymentez.github.io/api-doc/images/favicon-d165b374.svg" rel="icon" type="image/svg">
+    <meta charset="UTF-8">
+    <meta name="title" content="Título de la WEB">
+    <meta name="description" content="Descripción de la WEB">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<header>
+</header>
+<div class="wrapper">
+    <div class="navbar">
+    <ul>
+        <li><a href="index.html">Introduction</a></li>
+        <li><a href="cash.html">Cash</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Bank Transfer</a>
+          <ul class="dropdown-menu">
+            <li><a href="getBanks.html">Get Banks</a></li>
+            <li><a href="createTransfer.html">Create Transfer</a></li>
+            <li><a href="getStatus.html">Get Status</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">QR EMVCO</a>
+          <ul class="dropdown-menu">
+            <li><a href="generateQR.html">Generate QR</a></li>
+            <li><a href="consultQR.html">Consult QR</a></li>
+            <li><a href="updateQR.html">Update QR</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Wallets</a>
+          <ul class="dropdown-menu">
+            <li><a href="generateOrderWallet.html">Generate Order</a></li>
+            <li><a href="verifyOrderWallet.html">Consult Order</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Cards</a>
+          <ul class="dropdown-menu">
+            <li><a href="addCard.html">Add a Card</a></li>
+            <li><a href="getAllCards.html">Get all Cards</a></li>
+            <li><a href="deleteCard.html">Delete a Card</a></li>
+            <li><a href="initReference.html">Init a Reference</a></li>
+            <li><a href="debitWithToken.html">Debit With Token</a></li>
+            <li><a href="debitWithCredit.html">Debit With Credit</a></li>
+            <li><a href="debitWithCredit3d.html">Debit With Credit 3DS</a></li> 
+            <li><a href="authorize.html">Authorize</a></li>
+            <li><a href="capture.html">Capture</a></li>
+            <li><a href="verify.html">Verify</a></li>
+            <li><a href="refund.html">Refund</a></li>
+            <li><a href="void.html">Void</a></li>
+            <li><a href="getTransactionInfo.html">Transaction Info</a></li>
+          </ul>
+        </li>
+        <li><a href="linktopay.html">Link To Pay</a></li>
+
+    </ul>
+ </div>
+</div>
+<div class="container">
+    <img class="image" src="https://cdn.paymentez.com/img/nv/nuvei_logo.png">
+    <form>
+        <label for="environment">Environment:</label>
+        <select id="environment">
+            <option value="#">Select</option>
+            <option value="https://ccapi.paymentez.com/v2/transaction/debit_cc/">PROD</option>
+            <option value="https://ccapi-stg.paymentez.com/v2/transaction/debit_cc/">STG</option>
+        </select>
+
+        <input type="text" id="appcode" name="appcode" placeholder="AppCode" required>
+        <input type="password" id="appkey" name="appkey" placeholder="AppKey" required>
+        <input type="text" id="email" name="email" placeholder="Email" required>
+
+        <div class="container2">
+            <div class="card">
+                <div class="form">
+                    <div class="right-side">
+                        <label>Card Details</label>
+                        <div class="input-text">
+                            <input type="text" id="cardHolderName" placeholder="Card Holder Name" required>
+                        </div>
+                        <div class="input-text">
+                            <input type="text" id="cardNumber" placeholder="0000000000000000" data-slots="0"
+                                   data-accept="\d" required>
+                        </div>
+                        <div class="input-div">
+                            <div class="input-text">
+                                <select id="expirationMonth">
+                                    <option value="#">MM</option>
+                                    <option value="1">01</option>
+                                    <option value="2">02</option>
+                                    <option value="3">03</option>
+                                    <option value="4">04</option>
+                                    <option value="5">05</option>
+                                    <option value="6">06</option>
+                                    <option value="7">07</option>
+                                    <option value="8">08</option>
+                                    <option value="9">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                                <input type="text" id="expirationYear" placeholder="YYYY" data-slots="YYYY" required>
+                            </div>
+                            <div class="input-text">
+                                <input type="text" id="CVV" placeholder="000" data-slots="0" data-accept="\d" size="3"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="text" id="amount" name="amount" placeholder="Amount" required>
+        <input type="text" id="termUrl" name="termUrl" placeholder="Term URL" required>
+        <input type="button" value="Enviar" onclick="obtenerDatos()">
+    </form>
+</div>
+<div id="result1"></div>
+
+<div id="result2"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    document.addEventListener('DOMContentLoaded', () => {
+        for (const el of document.querySelectorAll("[placeholder][data-slots]")) {
+            const pattern = el.getAttribute("placeholder");
+            const slots = new Set(el.dataset.slots || "_");
+            const prev = (j => Array.from(pattern, (c, i) => slots.has(c) ? j = i + 1 : j))(0);
+            const first = [...pattern].findIndex(c => slots.has(c));
+            const accept = new RegExp(el.dataset.accept || "\\d", "g");
+            const clean = input => {
+                input = input.match(accept) || [];
+                return Array.from(pattern, c =>
+                    input[0] === c || slots.has(c) ? input.shift() || c : c
+                );
+            };
+            const format = () => {
+                const [i, j] = [el.selectionStart, el.selectionEnd].map(i => {
+                    i = clean(el.value.slice(0, i)).findIndex(c => slots.has(c));
+                    return i < 0 ? prev[prev.length - 1] : back ? prev[i - 1] || first : i;
+                });
+                el.value = clean(el.value).join``;
+                el.setSelectionRange(i, j);
+                back = false;
+            };
+            let back = false;
+            el.addEventListener("keydown", (e) => back = e.key === "Backspace");
+            el.addEventListener("input", format);
+            el.addEventListener("focus", format);
+            el.addEventListener("blur", () => el.value === pattern && (el.value = ""));
+        }
+    });
+
+    function validateform() {
+        var validate = true;
+        var validate_inputs = document.querySelectorAll(".right-side input");
+        validate_inputs.forEach(function (input_valid) {
+            input_valid.classList.remove('warning');
+            if (input_valid.hasAttribute('required')) {
+                if (input_valid.value.length === 0) {
+                    validate = false;
+                    input_valid.classList.add('warning');
+                }
+            }
+        });
+        return validate;
+    }
+
+    function obtenerDatos() {             
+
+        fetch('https://worldtimeapi.org/api/ip')
+            .then(response => response.json())
+            .then(data => {
+                var environment = document.getElementById('environment').value;
+                var appcode = document.getElementById('appcode').value;
+                var appkey = document.getElementById('appkey').value;
+                var email = document.getElementById('email').value;
+                var cardNumber = document.getElementById('cardNumber').value;
+                var cardHolderName = document.getElementById('cardHolderName').value;
+                var expirationMonth = document.getElementById('expirationMonth').value;
+                var expirationYear = document.getElementById('expirationYear').value;
+                var CVV = document.getElementById('CVV').value;
+                var amount = document.getElementById('amount').value;
+                var termUrl = document.getElementById('termUrl').value;
+
+                if (!email || !cardNumber || !cardHolderName || !expirationMonth || !expirationYear || !CVV || !amount || !appcode || !appkey || !termUrl) {
+                    alert("Por favor ingrese todos los campos");
+                    return;
+                }
+
+                const timestamp = data.unixtime;
+                const app_code = appcode;
+                const app_key = appkey;
+                const key_time = app_key + timestamp;
+                const uniq_token = CryptoJS.SHA256(key_time);
+                const str_union = `${app_code};${timestamp};${uniq_token}`;
+                const token = btoa(str_union);
+
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("auth-token", token);
+
+
+
+                var raw = JSON.stringify({
+                  "user": {
+                    "id": "1",
+                    "email": email
+                  },
+                  "order": {
+                    "amount": parseInt(amount),
+                    "description": "3DS Challenge",
+                    "vat": 0,
+                    "dev_reference": "referencia"
+                  },
+                  "card": {
+                    "number": cardNumber,
+                    "holder_name": cardHolderName,
+                    "expiry_month": parseInt(expirationMonth),
+                    "expiry_year": parseInt(expirationYear),
+                    "cvc": CVV
+                  },
+                  "billing_address": {
+                    "country": "COL"
+                  },
+                  "extra_params": {
+                    "threeDS2_data": {
+                      "term_url": termUrl,
+                      "device_type": "browser",
+                      "process_anyway": false
+                    },
+                    "browser_info": {
+                      "ip": data.client_ip,
+                      "language": "en-US",
+                      "java_enabled": false,
+                      "js_enabled": true,
+                      "color_depth": 24,
+                      "screen_height": 1200,
+                      "screen_width": 1920,
+                      "timezone_offset": 0,
+                      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36",
+                      "accept_header": "text/html"
+                    }
+                  }
+                });
+
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: raw,
+                  redirect: 'follow'
+                };
+
+                fetch(environment, requestOptions)
+                  .then(response => response.json())
+                  .then(result => {
+                    var encabezados = new Headers();
+                    encabezados.append("Content-Type", "application/json");
+                    encabezados.append("auth-token", token);
+
+                    var jsonNuevo = JSON.stringify({
+                      "user": {
+                        "id": "1"
+                      },
+                      "transaction": {
+                        "id": result.card.transaction_reference
+                      },
+                      "type": "AUTHENTICATION_CONTINUE",
+                      "value": ""
+                    });
+
+                    var requestValues = {
+                      method: 'POST',
+                      headers: encabezados,
+                      body: jsonNuevo,
+                      redirect: 'follow'
+                    };
+                    setTimeout(() => {
+                      fetch("https://ccapi-stg.paymentez.com/v2/transaction/verify", requestValues)
+                      .then(response => response.json())
+                      .then(datos => {
+                        const challengeRequest = datos["3ds"]["browser_response"]["challenge_request"];
+                        const transactionID = datos["transaction"]["id"];
+                        document.getElementById('result1').innerHTML ='Tu id: '+ transactionID;
+                        document.getElementById('result2').innerHTML ='Challenge: ' + challengeRequest;
+                        //document.getElementById('result').innerHTML = JSON.stringify(datos, null, 2);
+                      })
+                      .catch(error => console.log('Error', error));
+                    }, "5000");
+                    
+                  })
+                  .catch(error => console.log('Error', error));
+                })
+                .catch(error => {
+                  console.error('Error al obtener la hora: ', error);
+                });
+
+                }
+                </script>
+        <script src="index.js" type="text/javascript"></script>
+    </body>
+</html>

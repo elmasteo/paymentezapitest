@@ -261,6 +261,7 @@
                 fetch(environment, requestOptions)
                   .then(response => response.json())
                   .then(result => {
+
                     var encabezados = new Headers();
                     encabezados.append("Content-Type", "application/json");
                     encabezados.append("auth-token", token);
@@ -282,18 +283,38 @@
                       body: jsonNuevo,
                       redirect: 'follow'
                     };
+
+                    if (result.transaction.status =="success" || result.transaction.status_detail == 37){
+                        document.getElementById('result').innerHTML ='Tu id: '+ result.transaction.id;
+                        document.getElementById('result1').innerHTML = JSON.stringify(result, null, 2);
+                    }else{
+
+                   
                     setTimeout(() => {
-                      fetch("https://ccapi-stg.paymentez.com/v2/transaction/verify", requestValues)
+
+                      var verifyUrl='';
+                      if (environment =="https://ccapi.paymentez.com/v2/transaction/debit_cc/"){
+                        verifyUrl = 'https://ccapi.paymentez.com/v2/transaction/verify'
+                      }else{
+                        verifyUrl = 'https://ccapi-stg.paymentez.com/v2/transaction/verify'
+                      }
+                      fetch(verifyUrl, requestValues)
                       .then(response => response.json())
                       .then(datos => {
-                        const challengeRequest = datos["3ds"]["browser_response"]["challenge_request"];
-                        const transactionID = datos["transaction"]["id"];
-                        document.getElementById('result').innerHTML ='Tu id: '+ transactionID;
-                        document.getElementById('result1').innerHTML ='Challenge: ' + challengeRequest;
-                        //document.getElementById('result').innerHTML = JSON.stringify(datos, null, 2);
+                        if (datos.transaction.status_detail==36){
+                            const challengeRequest = datos["3ds"]["browser_response"]["challenge_request"];
+                            const transactionID = datos["transaction"]["id"];
+                            document.getElementById('result').innerHTML ='Tu id: '+ transactionID;
+                            document.getElementById('result1').innerHTML ='Challenge: ' + challengeRequest;
+                        }else{
+                            document.getElementById('result').innerHTML = 'Tu id: '+ datos.transaction.id;
+                            document.getElementById('result1').innerHTML = JSON.stringify(datos, null, 2);
+                        }
+                        
                       })
                       .catch(error => console.log('Error', error));
                     }, "5000");
+                    }                    
                     
                   })
                   .catch(error => console.log('Error', error));

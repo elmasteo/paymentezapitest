@@ -75,6 +75,7 @@
         <input type="text" id="appcode" name="appcode" placeholder="AppCode" required>
         <input type="password" id="appkey" name="appkey" placeholder="AppKey" required>
         <input type="text" id="email" name="email" placeholder="Email" required>
+        <input type="text" id="identifier" name="identifier" placeholder="ID" required>
 
         <div class="container2">
             <div class="card">
@@ -182,6 +183,7 @@
                 var appcode = document.getElementById('appcode').value;
                 var appkey = document.getElementById('appkey').value;
                 var email = document.getElementById('email').value;
+                var identifier = document.getElementById('identifier').value;
                 var cardNumber = document.getElementById('cardNumber').value;
                 var cardHolderName = document.getElementById('cardHolderName').value;
                 var expirationMonth = document.getElementById('expirationMonth').value;
@@ -190,7 +192,7 @@
                 var amount = document.getElementById('amount').value;
                 var termUrl = document.getElementById('termUrl').value;
 
-                if (!email || !cardNumber || !cardHolderName || !expirationMonth || !expirationYear || !CVV || !amount || !appcode || !appkey || !termUrl) {
+                if (!email || !cardNumber || !cardHolderName || !expirationMonth || !expirationYear || !CVV || !amount || !appcode || !appkey || !termUrl || !identifier) {
                     alert("Por favor ingrese todos los campos");
                     return;
                 }
@@ -211,7 +213,7 @@
 
                 var raw = JSON.stringify({
                   "user": {
-                    "id": "1",
+                    "id": identifier,
                     "email": email
                   },
                   "order": {
@@ -268,7 +270,7 @@
 
                     var jsonNuevo = JSON.stringify({
                       "user": {
-                        "id": "1"
+                        "id": identifier
                       },
                       "transaction": {
                         "id": result.card.transaction_reference

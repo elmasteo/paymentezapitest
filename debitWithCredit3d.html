@@ -9,6 +9,31 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
+    <style type="text/css">
+        .loader {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            margin-top: 20px;
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: #081f2c;
+            border-radius: 50%;
+            display: flex;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            }
+
+            @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+            }
+    </style>
 <header>
 </header>
 <div class="wrapper">
@@ -121,8 +146,10 @@
         <input type="text" id="termUrl" name="termUrl" placeholder="Term URL" required>
         <input type="button" value="Enviar" onclick="obtenerDatos()">
     </form>
+    <span class="loader" id="loader" style="display:none"></span>
     <div id="result"></div>
     <div id="result1"></div>
+    
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
@@ -291,24 +318,31 @@
                         document.getElementById('result1').innerHTML = JSON.stringify(result, null, 2);
                     }else{
 
-                   
+                        document.getElementById('loader').style.display = 'block'; 
+
                     setTimeout(() => {
 
+                        document.getElementById('loader').style.display = 'none';
+
                       var verifyUrl='';
-                      if (environment =="https://ccapi.paymentez.com/v2/transaction/debit_cc/"){
+                      if (environment =="https://ccapi.paymentez.com/v2/transaction/debit_cc/")
+                      {
                         verifyUrl = 'https://ccapi.paymentez.com/v2/transaction/verify'
-                      }else{
+                      }else
+                      {
                         verifyUrl = 'https://ccapi-stg.paymentez.com/v2/transaction/verify'
                       }
                       fetch(verifyUrl, requestValues)
                       .then(response => response.json())
                       .then(datos => {
-                        if (datos.transaction.status_detail==36){
+                        if (datos.transaction.status_detail==36)
+                        {
                             const challengeRequest = datos["3ds"]["browser_response"]["challenge_request"];
                             const transactionID = datos["transaction"]["id"];
                             document.getElementById('result').innerHTML ='Tu id: '+ transactionID;
                             document.getElementById('result1').innerHTML ='Challenge: ' + challengeRequest;
-                        }else{
+                        }else
+                        {
                             document.getElementById('result').innerHTML = 'Tu id: '+ datos.transaction.id;
                             document.getElementById('result1').innerHTML = JSON.stringify(datos, null, 2);
                         }

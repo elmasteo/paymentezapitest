@@ -83,7 +83,7 @@
 
       <input type="text" id="identifier" name="identifier" placeholder="ID" required>
 
-      <input type="text" id="token" name="token" placeholder="Token" required>  
+      <input type="text" id="tokenize" name="tokenize" placeholder="Token" required>  
 
       <input type="button" value="Enviar" onclick="obtenerDatos()">
     </form>
@@ -105,11 +105,11 @@
     var environment = document.getElementById('environment').value;
     var appcode = document.getElementById('appcode').value;
     var appkey = document.getElementById('appkey').value;
-    var token = document.getElementById('token').value;
+    var tokenize = document.getElementById('tokenize').value;
     var identifier = document.getElementById('identifier').value;
     
 
-    if (!token ||  !identifier ||!appcode ||!appkey) {
+    if (!tokenize ||  !identifier ||!appcode ||!appkey) {
       alert("Por favor ingrese todos los campos");
       return;
     }
@@ -128,7 +128,7 @@
   
     var raw = JSON.stringify({
    "card": {
-        "token": token
+        "token": tokenize
     },
     "user": {
         "id": identifier

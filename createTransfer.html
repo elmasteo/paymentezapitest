@@ -196,13 +196,13 @@
       "id": "PSE",
       "extra_params": {
         "bank_code": paymentez_bankCode,
-        "response_url": "https://paymentezapitest.netlify.app/createtransfer",
+        "response_url": "https://paymentezapitest.netlify.app/getstatus",
         "user": {
           "name": name,
           "fiscal_number": fiscal,
           "type": paymentez_userType,
           "type_fis_number": paymentez_userFisNumber,
-          "ip_address": "201.0.90.12"
+          "ip_address": data.client_ip
         }
       }
     },

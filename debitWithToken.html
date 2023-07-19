@@ -87,7 +87,7 @@
 
       <input type="number" id="amount" name="amount" min="0" step="0.01" placeholder="Amount" required>
 
-      <input type="text" id="token" name="token" placeholder="Token" required>
+      <input type="text" id="tokenize" name="tokenize" placeholder="Token" required>
 
       <input type="button" value="Enviar" onclick="obtenerDatos()">
     </form>
@@ -112,10 +112,10 @@
     var identifier = document.getElementById('identifier').value;
     var email = document.getElementById('email').value;
     var amount = document.getElementById('amount').value;
-    var token = document.getElementById('token').value;
+    var tokenize = document.getElementById('tokenize').value;
     
 
-    if (!token ||  !email || !amount ||!identifier ||!appcode ||!appkey ) {
+    if (!tokenize ||  !email || !amount ||!identifier ||!appcode ||!appkey ) {
       alert("Por favor ingrese todos los campos");
       return;
     }
@@ -144,7 +144,7 @@
         "vat": 0.00
     },
     "card": {
-        "token": token
+        "token": tokenize
     }
 });
   

@@ -65,7 +65,6 @@
         }
 
           #result {
-
             max-width: 500px;
             margin: 0 auto;
             padding: 20px;
@@ -73,15 +72,8 @@
             border-radius: 10px;
             box-shadow: 0 0 10px #ccc;
             margin-top: 20px;
-
-            /*margin-top: 2rem;
-            /*background-color: #3a4453;
-            color: #000;
-            font-size: 20px;
-            position: static;
-            margin-left: 200px;
-            margin-right: 20px;
-            padding: 20px;*/
+            word-wrap: break-word; 
+            word-break: break-all;
         }
 
           .container {

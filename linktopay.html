@@ -122,13 +122,13 @@
       return;
     }
   
-   var timestamp = data.unixtime;
-        const app_code = appcode;
-        const app_key = appkey;
-        const key_time = app_key + timestamp;
-        const uniq_token = CryptoJS.SHA256(key_time);
-        const str_union = `${app_code};${timestamp};${uniq_token}`;
-        const token = btoa(str_union);
+    var timestamp = data.unixtime;
+    const app_code = appcode;
+    const app_key = appkey;
+    const key_time = app_key + timestamp;
+    const uniq_token = CryptoJS.SHA256(key_time);
+    const str_union = `${app_code};${timestamp};${uniq_token}`;
+    const token = btoa(str_union);
   
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -155,10 +155,10 @@
         "allowed_payment_methods": [
           "All"
         ],
-        "success_url": "https://url-to-success.com",
-        "failure_url": "https://url-to-failure.com",
-        "pending_url": "https://url-to-pending.com",
-        "review_url": "https://url-to-review.com"
+        "success_url": "https://paymentezapitest.netlify.app/linktopay.html",
+        "failure_url": "https://paymentezapitest.netlify.app/linktopay.html",
+        "pending_url": "https://paymentezapitest.netlify.app/linktopay.html",
+        "review_url": "https://paymentezapitest.netlify.app/linktopay.html"
       }
     });
   
@@ -172,7 +172,10 @@
     fetch(environment, requestOptions)
       .then(response => response.json())
       .then(result => {
-        document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
+
+        var url = result.data.payment.payment_url;
+        window.location.href = url;
+        //document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
       })
       .catch(error => console.log('error', error));
 

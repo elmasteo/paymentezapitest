@@ -93,7 +93,7 @@
 
       <input type="button" value="Enviar" onclick="obtenerDatos()">
     </form>
-    <!--<div id="result"></div>-->
+    <div id="result"></div>
 </div>
     
     
@@ -173,9 +173,13 @@
       .then(response => response.json())
       .then(result => {
 
-        var url = result.data.payment.payment_url;
-        window.location.href = url;
-        //document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
+        if (result.success==true){
+          var url = result.data.payment.payment_url;
+          window.location.href = url;
+        }else{
+          document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
+        }
+
       })
       .catch(error => console.log('error', error));
 

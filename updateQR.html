@@ -142,7 +142,7 @@
       redirect: 'follow'
     };
 
-    var url = environment + transactionId; + '/update/'
+    var url = environment + transactionId + '/update/';
   
     fetch(url, requestOptions)
       .then(response => response.json())

@@ -40,6 +40,20 @@
             cursor: pointer;
         }
 
+        .js-payment-checkout{
+            
+            background: #081f2c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .js-payment-checkout:hover{
+            background-color: #175b81;
+        }
+
         input[type="button"]:hover {
             background-color: #175b81;
         }

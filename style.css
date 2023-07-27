@@ -41,7 +41,7 @@
         }
 
         .js-payment-checkout{
-            
+
             background: #081f2c;
             color: white;
             padding: 10px 20px;
@@ -93,6 +93,12 @@
           .container {
             margin-left: 190px;
 
+        }
+
+        .containerButton{
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
         }
         
         

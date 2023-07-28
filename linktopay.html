@@ -94,7 +94,7 @@
 
       <input type="button" value="Enviar" onclick="obtenerDatos()">
     </form>
-    <div id="result"></div>
+    <div id="result" style="display:none"></div>
 </div>
     
     
@@ -178,6 +178,7 @@
           var url = result.data.payment.payment_url;
           window.location.href = url;
         }else{
+          document.getElementById('result').style.display = 'block';
           document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
         }
 

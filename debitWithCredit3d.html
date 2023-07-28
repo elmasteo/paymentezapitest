@@ -149,8 +149,8 @@
         <input type="button" value="Enviar" onclick="obtenerDatos()">
     </form>
     <span class="loader" id="loader" style="display:none"></span>
-    <div id="result"></div>
-    <div id="result1"></div>
+    <div id="result" style="display:none"></div>
+    <div id="result1" style="display:none"></div>
     
 </div>
 
@@ -317,12 +317,16 @@
 
                     if (result.transaction.status =="success" || result.transaction.status_detail == 37)
                     {
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('result1').style.display = 'block';
                         document.getElementById('result').innerHTML ='Tu id: '+ result.transaction.id;
                         document.getElementById('result1').innerHTML = JSON.stringify(result, null, 2);
 
                     }else if (result.transaction.status_detail == 36){
                         const challengeRequest = result["3ds"]["browser_response"]["challenge_request"];
                         const transactionID = result["transaction"]["id"];
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('result1').style.display = 'block';
                         document.getElementById('result').innerHTML ='Tu id: '+ transactionID;
                         document.getElementById('result1').innerHTML ='Challenge: ' + challengeRequest;
                     }
@@ -347,12 +351,16 @@
                       .then(datos => {
                         if (datos.transaction.status_detail==36)
                         {
+                            document.getElementById('result').style.display = 'block';
+                            document.getElementById('result1').style.display = 'block';
                             const challengeRequest = datos["3ds"]["browser_response"]["challenge_request"];
                             const transactionID = datos["transaction"]["id"];
                             document.getElementById('result').innerHTML ='Tu id: '+ transactionID;
                             document.getElementById('result1').innerHTML ='Challenge: ' + challengeRequest;
                         }else
                         {
+                            document.getElementById('result').style.display = 'block';
+                            document.getElementById('result1').style.display = 'block';
                             document.getElementById('result').innerHTML = 'Tu id: '+ datos.transaction.id;
                             document.getElementById('result1').innerHTML = JSON.stringify(datos, null, 2);
                         }

@@ -91,6 +91,13 @@
 
       <input type="number" id="amount" name="monto" min="0" step="0.01" placeholder="Amount" required>
 
+      <label for="currency">Environment:</label>
+       <select id="currency" >
+          <option value="#">Select</option>
+          <option value="COP">COP</option>
+          <option value="MXN">MXN</option>
+        </select>
+
       <input type="text" id="fiscal" name="cedula" placeholder="Fiscal Number" required>
 
       <input type="button" value="Enviar" onclick="obtenerDatos()">
@@ -117,6 +124,7 @@
     var last_name = document.getElementById('last_name').value;
     var email = document.getElementById('email').value;
     var amount = document.getElementById('amount').value;
+    var currency = document.getElementById('currency').value;
     var fiscal = document.getElementById('fiscal').value;
 
     if (!name || !last_name || !email || !amount || !fiscal ||!appcode ||!appkey) {
@@ -149,7 +157,7 @@
         "description": "PRUEBA",
         "amount": amount,
         "installments_type": 0,
-        "currency": "COP"
+        "currency": currency
       },
       "configuration": {
         "partial_payment": true,

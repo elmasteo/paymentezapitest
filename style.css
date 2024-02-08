@@ -30,6 +30,12 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
+        
+        input[type="color"]{
+        width: 20%;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        }
 
         input[type="button"] {
             background: #081f2c;
